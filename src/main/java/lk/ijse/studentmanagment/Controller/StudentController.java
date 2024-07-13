@@ -5,10 +5,6 @@
  * */
 package lk.ijse.studentmanagment.Controller;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
@@ -16,24 +12,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lk.ijse.studentmanagment.DAO.Impl.StudentDataProcess;
+import lk.ijse.studentmanagment.DAO.StudentData;
 import lk.ijse.studentmanagment.Dto.StudentDto;
 import lk.ijse.studentmanagment.Util.UtilProcess;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @WebServlet(urlPatterns = "/student")
 public class StudentController extends HttpServlet {
     Connection connection;
-    static String SAVE_STUDENT = "INSERT INTO student (id,name,city,age) VALUES (?,?,?,?)";
-    static String UPDATE_STUDENT = "UPDATE student SET name = ? , city = ? , age = ? WHERE id = ?";
-    static String DELETE_STUDENT = "DELETE FROM student WHERE id = ? ";
-    static String GET_STUDENT = "SELECT * FROM student";
-
+    StudentData studentData = new StudentDataProcess();
     @Override
     public void init() throws ServletException {
         try {
@@ -52,26 +41,10 @@ public class StudentController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // ToDo: get details
         try(var writer = resp.getWriter()){
-            var ps = connection.prepareStatement(GET_STUDENT);
-
-            ResultSet resultSet = ps.executeQuery();
-            List<StudentDto> studentDtoList = new ArrayList<>();
-
-            while (resultSet.next()) {
-                StudentDto studentDto = new StudentDto();
-                studentDto.setId(resultSet.getString("id"));
-                studentDto.setName(resultSet.getString("name"));
-                studentDto.setCity(resultSet.getString("city"));
-                studentDto.setAge(resultSet.getString("age"));
-                studentDtoList.add(studentDto);
-            }
-
-            Jsonb jsonb = JsonbBuilder.create();
-            String Student = jsonb.toJson(studentDtoList);
-
-            System.out.println("Students : " + Student);
-            writer.write(Student);
-        } catch (SQLException e) {
+            String student = studentData.getStudent(connection);
+            System.out.println(student);
+            writer.write(student);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -83,26 +56,17 @@ public class StudentController extends HttpServlet {
             //send error
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
-        //String id  = UUID.randomUUID().toString();
-        Jsonb jsonb = JsonbBuilder.create();
-        StudentDto studentDTO = jsonb.fromJson(req.getReader(), StudentDto.class);
-        studentDTO.setId(UtilProcess.generateId());
-        System.out.println(studentDTO);
+
         // Persist Data
         try (var writer = resp.getWriter()){
-            var ps = connection.prepareStatement(SAVE_STUDENT);
-            ps.setString(1, studentDTO.getId());
-            ps.setString(2, studentDTO.getName());
-            ps.setString(3, studentDTO.getCity());
-            ps.setString(4, studentDTO.getAge());
+            Jsonb jsonb = JsonbBuilder.create();
+            StudentDto studentDTO = jsonb.fromJson(req.getReader(), StudentDto.class);
+            studentDTO.setId(UtilProcess.generateId());
 
-            if(ps.executeUpdate() != 0){
-                writer.write("Student Saved");
-            }else {
-                writer.write("Student Not Saved");
-            }
+            var saveStudent = studentData.saveStudent(studentDTO,connection);
+            writer.write(saveStudent);
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         /*//process
@@ -138,22 +102,14 @@ public class StudentController extends HttpServlet {
             //send error
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
-        Jsonb jsonb = JsonbBuilder.create();
-        StudentDto studentDto = jsonb.fromJson(req.getReader(), StudentDto.class);
 
         try(var writer = resp.getWriter()){
-            var ps = connection.prepareStatement(UPDATE_STUDENT);
-            ps.setString(1,studentDto.getName());
-            ps.setString(2,studentDto.getCity());
-            ps.setString(3,studentDto.getAge());
-            ps.setString(4,studentDto.getId());
+            Jsonb jsonb = JsonbBuilder.create();
+            StudentDto studentDto = jsonb.fromJson(req.getReader(), StudentDto.class);
 
-            if (ps.executeUpdate() !=0){
-                writer.write("Student Updated");
-            }else {
-                writer.write("Student not Updated");
-            }
-        } catch (SQLException e) {
+            var updateStudent = studentData.updateStudent(studentDto,connection);
+            writer.write(updateStudent);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -163,16 +119,9 @@ public class StudentController extends HttpServlet {
        //ToDo:delete
         String id = req.getParameter("id");
         try(var writer = resp.getWriter()){
-            var ps = connection.prepareStatement(DELETE_STUDENT);
-            ps.setString(1,id);
-
-            if (ps.executeUpdate() !=0){
-                writer.write("Student Deleted");
-            }else {
-                writer.write("Student not Deleted");
-            }
-
-        } catch (SQLException e) {
+            var deleteStudent = studentData.deleteStudent(id,connection);
+            writer.write(deleteStudent);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
