@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.studentmanagment.DAO.Impl.StudentDataProcess;
-import lk.ijse.studentmanagment.DAO.StudentData;
 import lk.ijse.studentmanagment.Dto.StudentDto;
 import lk.ijse.studentmanagment.Util.UtilProcess;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.sql.*;
 @WebServlet(urlPatterns = "/student")
 public class StudentController extends HttpServlet {
     Connection connection;
-    StudentData studentData = new StudentDataProcess();
+    StudentDataProcess studentData = new StudentDataProcess();
     @Override
     public void init() throws ServletException {
         try {
