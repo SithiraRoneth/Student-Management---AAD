@@ -1,6 +1,6 @@
-package lk.ijse.studentmanagment.DAO;
+package lk.ijse.studentmanagement.DAO;
 
-import lk.ijse.studentmanagment.Dto.StudentDto;
+import lk.ijse.studentmanagement.Dto.StudentDto;
 
 import java.sql.Connection;
 

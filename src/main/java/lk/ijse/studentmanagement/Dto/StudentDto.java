@@ -3,7 +3,7 @@
  * Time :10:29
  * Project Name :StudentManagment
  * */
-package lk.ijse.studentmanagment.Dto;
+package lk.ijse.studentmanagement.Dto;
 
 import lombok.*;
 

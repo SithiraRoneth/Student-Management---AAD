@@ -3,7 +3,7 @@
  * Time :10:14
  * Project Name :StudentManagment
  * */
-package lk.ijse.studentmanagment.Util;
+package lk.ijse.studentmanagement.Util;
 
 import java.util.UUID;
 
