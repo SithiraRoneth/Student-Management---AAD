@@ -24,6 +24,7 @@ public class StudentController extends HttpServlet {
     StudentDataProcess studentData = new StudentDataProcess();
     @Override
     public void init() throws ServletException {
+        // ToDo : connected mysql
         try {
             var driver = getServletContext().getInitParameter("driver-class");
             var dbUrl = getServletContext().getInitParameter("dbURL");
