@@ -15,13 +15,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.studentmanagement.DAO.Impl.StudentDataProcess;
 import lk.ijse.studentmanagement.Dto.StudentDto;
 import lk.ijse.studentmanagement.Util.UtilProcess;
+
 import java.io.IOException;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/student")
 public class StudentController extends HttpServlet {
-     Connection connection;
+    Connection connection;
     StudentDataProcess studentData = new StudentDataProcess();
+
     @Override
     public void init() throws ServletException {
         // ToDo : connected mysql
@@ -31,8 +33,8 @@ public class StudentController extends HttpServlet {
             var userName = getServletContext().getInitParameter("dbUserName");
             var password = getServletContext().getInitParameter("dbPassword");
             Class.forName(driver);
-            this.connection =  DriverManager.getConnection(dbUrl,userName,password);
-        }catch (ClassNotFoundException | SQLException e){
+            this.connection = DriverManager.getConnection(dbUrl, userName, password);
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -40,7 +42,7 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // ToDo: get details
-        try(var writer = resp.getWriter()){
+        try (var writer = resp.getWriter()) {
             String student = studentData.getStudent(connection);
             System.out.println(student);
             writer.write(student);
@@ -52,18 +54,18 @@ public class StudentController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //Todo: Save student
-        if(!req.getContentType().toLowerCase().startsWith("application/json")|| req.getContentType() == null){
+        if (!req.getContentType().toLowerCase().startsWith("application/json") || req.getContentType() == null) {
             //send error
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         // Persist Data
-        try (var writer = resp.getWriter()){
+        try (var writer = resp.getWriter()) {
             Jsonb jsonb = JsonbBuilder.create();
             StudentDto studentDTO = jsonb.fromJson(req.getReader(), StudentDto.class);
             studentDTO.setId(UtilProcess.generateId());
 
-            var saveStudent = studentData.saveStudent(studentDTO,connection);
+            var saveStudent = studentData.saveStudent(studentDTO, connection);
             writer.write(saveStudent);
 
         } catch (Exception e) {
@@ -97,17 +99,17 @@ public class StudentController extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-       //ToDo: update
-        if(!req.getContentType().toLowerCase().startsWith("application/json")|| req.getContentType() == null){
+        //ToDo: update
+        if (!req.getContentType().toLowerCase().startsWith("application/json") || req.getContentType() == null) {
             //send error
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        try(var writer = resp.getWriter()){
+        try (var writer = resp.getWriter()) {
             Jsonb jsonb = JsonbBuilder.create();
             StudentDto studentDto = jsonb.fromJson(req.getReader(), StudentDto.class);
 
-            var updateStudent = studentData.updateStudent(studentDto,connection);
+            var updateStudent = studentData.updateStudent(studentDto, connection);
             writer.write(updateStudent);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -116,10 +118,10 @@ public class StudentController extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-       //ToDo:delete
+        //ToDo:delete
         String id = req.getParameter("id");
-        try(var writer = resp.getWriter()){
-            var deleteStudent = studentData.deleteStudent(id,connection);
+        try (var writer = resp.getWriter()) {
+            var deleteStudent = studentData.deleteStudent(id, connection);
             writer.write(deleteStudent);
         } catch (Exception e) {
             throw new RuntimeException(e);
