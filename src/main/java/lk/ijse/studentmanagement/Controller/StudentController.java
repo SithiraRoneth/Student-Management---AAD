@@ -1,7 +1,7 @@
 /* Created By Sithira Roneth
  * Date :6/29/24
  * Time :14:18
- * Project Name :StudentManagment
+ * Project Name :StudentManagement
  * */
 package lk.ijse.studentmanagement.Controller;
 
@@ -20,7 +20,7 @@ import java.sql.*;
 
 @WebServlet(urlPatterns = "/student")
 public class StudentController extends HttpServlet {
-    Connection connection;
+     Connection connection;
     StudentDataProcess studentData = new StudentDataProcess();
     @Override
     public void init() throws ServletException {
