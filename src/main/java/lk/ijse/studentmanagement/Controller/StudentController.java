@@ -16,6 +16,9 @@ import lk.ijse.studentmanagement.DAO.Impl.StudentDataProcess;
 import lk.ijse.studentmanagement.Dto.StudentDto;
 import lk.ijse.studentmanagement.Util.UtilProcess;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
 
@@ -26,8 +29,8 @@ public class StudentController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        // ToDo : connected mysql
-        try {
+        // ToDo : connect driver class[mysql]
+        /*try {
             var driver = getServletContext().getInitParameter("driver-class");
             var dbUrl = getServletContext().getInitParameter("dbURL");
             var userName = getServletContext().getInitParameter("dbUserName");
@@ -35,6 +38,13 @@ public class StudentController extends HttpServlet {
             Class.forName(driver);
             this.connection = DriverManager.getConnection(dbUrl, userName, password);
         } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }*/
+        try {
+            var ctx = new InitialContext();
+            DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/StudentManagementAAD");
+            this.connection =  pool.getConnection();
+        }catch (NamingException | SQLException e){
             e.printStackTrace();
         }
     }

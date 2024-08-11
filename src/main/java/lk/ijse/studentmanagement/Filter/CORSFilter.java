@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter("/*")
+@WebFilter(urlPatterns = "/*")
 public class CORSFilter extends HttpFilter {
 
     @Override
