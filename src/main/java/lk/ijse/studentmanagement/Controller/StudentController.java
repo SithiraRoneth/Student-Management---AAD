@@ -43,8 +43,8 @@ public class StudentController extends HttpServlet {
         try {
             var ctx = new InitialContext();
             DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/StudentManagementAAD");
-            this.connection =  pool.getConnection();
-        }catch (NamingException | SQLException e){
+            this.connection = pool.getConnection();
+        } catch (NamingException | SQLException e) {
             e.printStackTrace();
         }
     }
