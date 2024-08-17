@@ -50,6 +50,7 @@ public class StudentController extends HttpServlet {
             DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/StudentManagementAAD");
             this.connection = pool.getConnection();
         } catch (NamingException | SQLException e) {
+            logger.error("init failed with ",e.getMessage());
             e.printStackTrace();
         }
     }
