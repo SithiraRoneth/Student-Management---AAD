@@ -5,7 +5,6 @@
  * */
 package lk.ijse.studentmanagement.Controller;
 
-import com.mysql.cj.log.LogFactory;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
@@ -45,6 +44,7 @@ public class StudentController extends HttpServlet {
             e.printStackTrace();
         }*/
         logger.info("Initializing StudentController ");
+        logger.trace("init() called ");
         try {
             var ctx = new InitialContext();
             DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/StudentManagementAAD");
@@ -81,7 +81,7 @@ public class StudentController extends HttpServlet {
 
             Jsonb jsonb = JsonbBuilder.create();
             StudentDto studentDTO = jsonb.fromJson(req.getReader(), StudentDto.class);
-            studentDTO.setId(UtilProcess.generateId());
+            //studentDTO.setId(UtilProcess.generateId());
 
             var saveStudent = studentData.saveStudent(studentDTO, connection);
             writer.write(saveStudent);
@@ -142,6 +142,7 @@ public class StudentController extends HttpServlet {
         try (var writer = resp.getWriter()) {
             var deleteStudent = studentData.deleteStudent(id, connection);
             writer.write(deleteStudent);
+            logger.info("Student Deleted !");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
