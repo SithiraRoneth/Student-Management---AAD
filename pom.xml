@@ -55,7 +55,12 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
-
+        <!-- Add logback dependency -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.7</version>
+        </dependency>
     </dependencies>
 
     <build>
