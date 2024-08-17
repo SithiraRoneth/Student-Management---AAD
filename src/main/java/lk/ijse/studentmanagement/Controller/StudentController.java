@@ -5,6 +5,7 @@
  * */
 package lk.ijse.studentmanagement.Controller;
 
+import com.mysql.cj.log.LogFactory;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lk.ijse.studentmanagement.DAO.Impl.StudentDataProcess;
 import lk.ijse.studentmanagement.Dto.StudentDto;
 import lk.ijse.studentmanagement.Util.UtilProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -22,8 +25,9 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
 
-@WebServlet(urlPatterns = "/student")
+@WebServlet(urlPatterns = "/student",loadOnStartup = 2)
 public class StudentController extends HttpServlet {
+    static Logger logger = LoggerFactory.getLogger(StudentController.class);
     Connection connection;
     StudentDataProcess studentData = new StudentDataProcess();
 
@@ -40,6 +44,7 @@ public class StudentController extends HttpServlet {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }*/
+        logger.info("Initializing StudentController ");
         try {
             var ctx = new InitialContext();
             DataSource pool = (DataSource) ctx.lookup("java:comp/env/jdbc/StudentManagementAAD");
@@ -63,6 +68,7 @@ public class StudentController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         //Todo: Save student
         if (!req.getContentType().toLowerCase().startsWith("application/json") || req.getContentType() == null) {
             //send error
@@ -71,12 +77,14 @@ public class StudentController extends HttpServlet {
 
         // Persist Data
         try (var writer = resp.getWriter()) {
+
             Jsonb jsonb = JsonbBuilder.create();
             StudentDto studentDTO = jsonb.fromJson(req.getReader(), StudentDto.class);
             studentDTO.setId(UtilProcess.generateId());
 
             var saveStudent = studentData.saveStudent(studentDTO, connection);
             writer.write(saveStudent);
+            logger.info("Student Saved Successfully");
 
         } catch (Exception e) {
             throw new RuntimeException(e);

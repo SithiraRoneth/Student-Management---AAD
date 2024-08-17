@@ -1,6 +1,6 @@
-<context>
-    <Resource name="jdbc/StudentManagementAAD" auth="Container" type="javax.sql.DataSource"
-              maxTotal="10" maxIdle="8" maxWaitMillis="-1"
-              username="root" password="1234" driverClassName="com.mysql.cj.jdbc.Driver"
-              url="jdbc:mysql://localhost:3306/StudentManagementAAD?createDatabaseIfNotExist=true"/>
-</context>
+<Context antiJARLocking="true" path="/JNDI">
+<Resource name="jdbc/StudentManagementAAD" auth="Container" type="javax.sql.DataSource"
+          maxActive="100" maxIdle="30" maxWait="10000"
+          username="root" password="1234" driverClassName="com.mysql.cj.jdbc.Driver"
+          url="jdbc:mysql://localhost:3306/StudentManagementAAD?createDatabaseIfNotExist=true"/>
+</Context>
